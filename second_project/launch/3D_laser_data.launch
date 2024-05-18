@@ -1,0 +1,28 @@
+<launch>
+
+  <!--  tf_publisher  -->
+  <node pkg="second_project" name="tf_publisher" type="tf_publisher" output="screen"/>
+  
+  <!--  slam_toolbox  -->
+  <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
+    <rosparam command="load" file="$(find second_project)/cfg/3D_laser_data_config.yaml" />
+  </node>
+
+ <!--  rviz  -->
+ <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/config_mapping.rviz"/>
+
+ <!--  pointcloud_to_laserscan  -->
+ <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan" output="screen">
+   <remap from="cloud_in" to="/velodyne_points"/>
+   <remap from="scan" to="/converted_scan"/>
+   <param name="min_height" value="0.2"/>
+   <param name="max_height" value="0.8"/>
+   <param name="angle_increment" value="0.002"/>
+   <param name="range_max" value="30.0"/>
+   <param name="range_min" value="0.5"/>
+ </node>
+
+ <!--  rqt_tf_tree  -->
+ <node name="rqt_tf_tree" pkg="rqt_tf_tree" type="rqt_tf_tree" />
+
+</launch>
